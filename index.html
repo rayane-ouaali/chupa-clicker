@@ -64,11 +64,32 @@
   const zoneY = 0;
 
   const lollipopImages = [];
-  for (let i = 1; i <= 5; i++) {
-    const img = new Image();
-    img.src = `chupa${i}.png`;
-    lollipopImages.push(img);
+
+  function loadImages(paths, callback) {
+    let loaded = 0;
+    const images = [];
+
+    paths.forEach((path, index) => {
+      const img = new Image();
+      img.onload = () => {
+        loaded++;
+        if (loaded === paths.length) {
+          callback(images);
+        }
+      };
+      img.src = path;
+      images[index] = img;
+    });
   }
+
+  const imagePaths = [
+    'chupa1.png',
+    'chupa2.png',
+    'chupa3.png',
+    'chupa4.png',
+    'chupa5.png'
+  ];
+
 
   class Lollipop {
     constructor() {
@@ -93,6 +114,7 @@
       if (this.y > canvas.height) {
         gameOver = true;
         restartBtn.style.display = "block";
+        restartBtn.style.marginTop = "100px";
       }
     }
   }
@@ -161,8 +183,11 @@
     gameLoop();
   });
 
-  spawnLollipop();
-  gameLoop();
+  loadImages(imagePaths, (loadedImages) => {
+    lollipopImages.push(...loadedImages);
+    spawnLollipop();
+    gameLoop();
+  });
 </script>
 
 </body>
